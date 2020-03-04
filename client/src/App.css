@@ -1,0 +1,11 @@
+.App {
+    text-align: left;
+    background-color: #efefef;
+    min-height: 100vh;
+    display: flex;
+    padding: 3em;
+}
+
+.space-from-right-5 {
+    margin-right: .5em;
+}
