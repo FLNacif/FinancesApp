@@ -1,20 +1,40 @@
 import React, { Component } from 'react';
-import './Home.css';
 import { AddStockForm } from '../../components/AddStockForm/AddStockForm';
 import { StocksTable } from '../../components/StocksTable/StocksTable';
 import { SummaryStocks } from '../../components/SummaryStocks/SummaryStocks';
 import { TransferedBrokerForm } from '../../components/TransferedBrokerForm/TransferedBrokerForm';
+import Logged from '../../components/Logged/Logged';
+import { GlobalStore } from '../../services/GlobalStore';
+import { Redirect } from 'react-router-dom';
+import { Login } from '../Login/Login';
 
 export class Home extends Component {
-    
+
+    constructor(props) {
+        super(props);
+        this.state = { keycloak: GlobalStore.lookAt('keycloak') }
+    }
+
+    componentDidMount() {
+        GlobalStore.subscribe('keycloak', keycloak => {
+            this.setState({ keycloak });
+        })
+    }
+
     render() {
-        return (
-            <div>
-                <TransferedBrokerForm></TransferedBrokerForm>
-                <AddStockForm></AddStockForm>
-                <SummaryStocks></SummaryStocks>
-                <StocksTable></StocksTable>
-            </div>
-        );
+        if (this.state.keycloak) {
+            if (this.state.keycloak?.authenticated) {
+                return (
+                    <div>
+                        <Logged></Logged>
+                        <TransferedBrokerForm></TransferedBrokerForm>
+                        <AddStockForm></AddStockForm>
+                        <SummaryStocks></SummaryStocks>
+                        <StocksTable></StocksTable>
+                    </div>
+                );
+            } else return (<div>Unable to authenticate!</div>)
+        }
+        return (<Login></Login>);
     }
 }

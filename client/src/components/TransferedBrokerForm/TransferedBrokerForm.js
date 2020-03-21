@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './TransferedBrokerForm.css';
 
-import { PrimaryButton, DefaultButton, TextField, Stack, ComboBox, DatePicker } from 'office-ui-fabric-react';
+import { PrimaryButton, TextField, Stack, DatePicker } from 'office-ui-fabric-react';
 
 export class TransferedBrokerForm extends Component {
 

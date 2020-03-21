@@ -4,100 +4,96 @@ import './StocksTable.css'
 import currencyFormatter from "../../shared/formatters/currencyFormatter";
 import decimalPlacesFormatter from "../../shared/formatters/decimalPlacesFormatter";
 
+import { getPosition } from "../../services/operation.service"
+
 export class StocksTable extends Component {
 
-    columns = [
-        {
-            key: 'Stock',
-            name: 'Stock',
-            fieldName: 'code',
-            isRowHeader: true,
-        },
-        {
-            key: 'Price',
-            name: 'Price',
-            onRender: this.onRenderCurrencyColumn,
-            fieldName: 'price'
-        },
-        {
-            key: 'Weight',
-            name: 'Weight',
-            fieldName: 'weight',
-        },
-        {
-            key: 'HaveShares',
-            name: 'Have Shares',
-            fieldName: 'haveShares',
-        },
-        {
-            key: 'AvgPrice',
-            name: 'Avg Price',
-            fieldName: 'avgPrice',
-        },
-        {
-            key: 'Invested',
-            name: 'Invested',
-            fieldName: 'invested',
-        },
-        {
-            key: 'HaveMoney',
-            name: 'Have Money',
-            onRender: this.onRenderCurrencyColumn,
-            fieldName: 'haveMoney'
-        },
-        {
-            key: 'Action',
-            name: 'Action',
-            fieldName: 'action'
-        },
-        {
-            key: 'IdealPct',
-            name: 'Ideal %',
-            onRender: this.onRenderPercentageColumn,
-            fieldName: 'idealPct'
-        },
-        {
-            key: 'IdealMoney',
-            name: 'Ideal Money',
-            onRender: this.onRenderCurrencyColumn,
-            fieldName: 'idealMoney'
-        },
-        {
-            key: 'MissingMoney',
-            name: 'Missing Money',
-            onRender: this.onRenderCurrencyColumn,
-            fieldName: 'missingMoney'
-        },
-        {
-            key: 'MissingShares',
-            name: 'Missing Shares',
-            fieldName: 'missingShares'
-        },        
-        {
-            key: 'EquityVariation',
-            name: 'Equity Variation',
-            fieldName: 'variation'
-        },
-    ]
+    state = {
+        columns: [
+            {
+                key: 'Stock',
+                name: 'Stock',
+                fieldName: 'code',
+                isRowHeader: true,
+            },
+            {
+                key: 'Price',
+                name: 'Price',
+                onRender: this.onRenderCurrencyColumn,
+                fieldName: 'price'
+            },
+            {
+                key: 'Weight',
+                name: 'Weight',
+                fieldName: 'weight',
+            },
+            {
+                key: 'HaveShares',
+                name: 'Have Shares',
+                fieldName: 'haveShares',
+            },
+            {
+                key: 'AvgPrice',
+                name: 'Avg Price',
+                fieldName: 'avgPrice',
+            },
+            {
+                key: 'Invested',
+                name: 'Invested',
+                fieldName: 'invested',
+            },
+            {
+                key: 'HaveMoney',
+                name: 'Have Money',
+                onRender: this.onRenderCurrencyColumn,
+                fieldName: 'haveMoney'
+            },
+            {
+                key: 'Action',
+                name: 'Action',
+                fieldName: 'action'
+            },
+            {
+                key: 'IdealPct',
+                name: 'Ideal %',
+                onRender: this.onRenderPercentageColumn,
+                fieldName: 'idealPct'
+            },
+            {
+                key: 'IdealMoney',
+                name: 'Ideal Money',
+                onRender: this.onRenderCurrencyColumn,
+                fieldName: 'idealMoney'
+            },
+            {
+                key: 'MissingMoney',
+                name: 'Missing Money',
+                onRender: this.onRenderCurrencyColumn,
+                fieldName: 'missingMoney'
+            },
+            {
+                key: 'MissingShares',
+                name: 'Missing Shares',
+                fieldName: 'missingShares'
+            },
+            {
+                key: 'EquityVariation',
+                name: 'Equity Variation',
+                fieldName: 'variation'
+            },
+        ],
 
-    items = [
-        {
-            code: 'IVVB11',
-            price: 148.63,
-            weight: 10,
-            haveShares: 0,
-            avgPrice: 0,
-            invested: 0,
-            haveMoney: 0,
-            havePct: 0,
-            action: 'Comprar',
-            idealPct: 8.47,
-            idealMoney: 686.98,
-            missingMoney: 686.98,
-            missingShares: 4,
-            variation: null
-        }
-    ]
+        items: [
+        ]
+    }
+
+    componentDidMount() {
+        getPosition().then(ops => {
+            this.setState({ items: ops.data });
+        }).catch(err => {
+            // panic(err)
+        })
+    }
 
     onRenderCurrencyColumn(item, index, column) {
         return (
@@ -113,9 +109,8 @@ export class StocksTable extends Component {
         return (
             <Stack className="stock-table-stack">
                 <DetailsList
-                    items={this.items}
-                    columns={this.columns}>
-
+                    items={this.state.items}
+                    columns={this.state.columns}>
                 </DetailsList>
             </Stack>
         );
