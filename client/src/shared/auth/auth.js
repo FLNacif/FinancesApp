@@ -7,13 +7,12 @@ export function authorizedRequest(method, url, body = {}, header = {}) {
     });
 
     return GlobalStore.lookAt('keycloak').updateToken(30).then(function () {
-        if (method.toUpperCase() === 'GET') {
-            return axios.get(url, { headers: authorizedHeader });
-        }
-
-        if (method.toUpperCase() === 'POST') {
-            return axios.post(url, body, { headers: authorizedHeader });
-        }
+            return axios({
+                method: method,
+                url: url,
+                data: body,
+                headers : authorizedHeader
+            })
     }).catch(function (err) {
         console.log(err)
     });

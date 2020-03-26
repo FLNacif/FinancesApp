@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
 import './App.css';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Redirect } from 'react-router-dom';
 import { Home } from './views/Home/Home';
 import { Login } from './views/Login/Login';
 import { GlobalStore } from './services/GlobalStore';
-import LoginLogout from './components/LoginLogout/LoginLogout';
+import Menu from './components/Menu/Menu';
 
-export class App extends Component{
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    GlobalStore.lookAt('keycloak')?.authenticated === true
+      ? <Component {...props} />
+      : <Redirect to={{
+        pathname: '/login',
+        state: { from: props.location }
+      }} />
+  )} />
+)
 
-  constructor(){
+export class App extends Component {
+
+  constructor() {
     super()
-    // this.setState({authenticated: GlobalStore.lookAt('keycloak')?.authenticated});
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.keycloakListener.unsubscribe();
   }
 
-  componentDidMount(){
-    this.keycloakListener = GlobalStore.subscribe('keycloak', (keycloak) =>{
-      this.setState({authenticated: keycloak?.authenticated})
+  componentDidMount() {
+    this.keycloakListener = GlobalStore.subscribe('keycloak', (keycloak) => {
+      this.setState({ authenticated: keycloak?.authenticated })
     })
   }
 
@@ -27,12 +37,8 @@ export class App extends Component{
     return (
       <BrowserRouter>
         <div className="App">
-          <ul>
-            <li><Link to="/home">Home</Link></li>
-            <li><LoginLogout></LoginLogout></li>
-          </ul>
-          {/* <Home></Home> */}
-          <Route path="/home" component={Home} />
+          <Menu></Menu>
+          <PrivateRoute path="/home" component={Home} />
           <Route path="/login" component={Login} />
         </div>
       </BrowserRouter>

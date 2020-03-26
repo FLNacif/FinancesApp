@@ -5,13 +5,18 @@ import { Redirect } from 'react-router-dom';
 
 export class Login extends Component {
 
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = { authenticated: GlobalStore.lookAt('keycloak')?.authenticated };
+        if (this.props.location?.state != null) {
+            localStorage['lastRouteLogin'] = JSON.stringify(this.props.location.state.from);
+        }
+
     }
 
     componentWillUnmount() {
         this.keycloakListener.unsubscribe();
+        localStorage.removeItem('lastRouteLogin')
     }
 
     componentDidMount() {
@@ -22,15 +27,19 @@ export class Login extends Component {
         if (!(GlobalStore.lookAt('keycloak')?.authenticated)) {
             const keycloak = Keycloak('keycloak.json');
 
-            keycloak.init({ onLoad: 'login-required', promiseType: 'native' }).then(_ => {
+            keycloak.init({ onLoad: 'login-required', promiseType: 'native' }).then(authenticated => {
                 GlobalStore.publish('keycloak', keycloak)
             })
         }
     }
 
     render() {
+        let from = { pathname: '/' }
+        if (localStorage['lastRouteLogin']) {
+            from = JSON.parse(localStorage['lastRouteLogin']);
+        }
         if (this.state.authenticated) {
-            return (<Redirect to="/"></Redirect>);
+            return (<Redirect to={from}></Redirect>);
         }
         return null;
     }
