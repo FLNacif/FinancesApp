@@ -1,7 +1,7 @@
 package models
 
 import (
-	"server/pkg/config"
+	"github.com/flnacif/financeapp/pkg/config"
 	"github.com/jinzhu/gorm"
 )
 

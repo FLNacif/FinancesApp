@@ -1,0 +1,1 @@
+docker run --rm -v "%cd%":/go/src/server -w /go/src/server -e GOOS=windows -e GOARCH=386 golang /bin/bash -c "go get; go build"

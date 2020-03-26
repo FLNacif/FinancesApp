@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"server/pkg/utils"
+	"github.com/flnacif/financeapp/pkg/utils"
 	"net/http"
-	"server/pkg/models"
+	"github.com/flnacif/financeapp/pkg/models"
 )
 
 var NewOperation models.StockOperation
@@ -19,6 +19,14 @@ func CreateOperation(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetOperations(w http.ResponseWriter, r *http.Request) {
+	newOperations:= models.GetAllStockOperations()
+	res, _ := json.Marshal(newOperations)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
+func GetPositions(w http.ResponseWriter, r *http.Request) {
 	newOperations:= models.GetAllStockOperations()
 	res, _ := json.Marshal(newOperations)
 	w.Header().Set("Content-Type", "application/json")

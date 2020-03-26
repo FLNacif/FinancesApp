@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/flnacif/financeapp/pkg/models/dto"
 	"time"
 )
 
@@ -20,8 +21,15 @@ func (so *StockOperation) CreateStockOperation() *StockOperation {
 	return so
 }
 
-func  GetAllStockOperations() []StockOperation {
+func GetAllStockOperations() []StockOperation {
 	var StockOperations []StockOperation
 	db.Find(&StockOperations)
 	return StockOperations
+}
+
+func GetPositions() []dto.StockPositionDto {
+	var position []dto.StockPositionDto
+	//position, err := db.Raw("SELECT * FROM stock_operations").Rows()
+
+	return position
 }
