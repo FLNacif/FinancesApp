@@ -1,10 +1,12 @@
 package middlewares
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"strings"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/flnacif/financeapp/pkg/config"
 )
 
@@ -12,9 +14,9 @@ func AuthMiddleware(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		authHeader := r.Header.Get("Authorization")
-		jwt := strings.Split(authHeader, " ")[1]
+		jwtToken := strings.Split(authHeader, " ")[1]
 
-		token, err := config.VerifyJWT([]byte(jwt))
+		token, err := config.VerifyJWT([]byte(jwtToken))
 
 		if err != nil {
 			log.Println(err)
@@ -22,9 +24,11 @@ func AuthMiddleware(next http.HandlerFunc) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("Unauthorized"))
 		} else {
-			//log.Println("Authorized request: %s", "asd")
-			log.Println(token.Claims)
-			// TODO: withContext aqui
+			claims := token.Claims.(jwt.MapClaims)
+			log.Printf("Authorized request for: %s\n", claims["preferred_username"])
+			ctx := context.WithValue(r.Context(), "userContextClaims", claims)
+
+			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		}
 	})
