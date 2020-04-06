@@ -1,21 +1,33 @@
 import React, { Component } from 'react';
 import './AddStockForm.css';
 import { saveOperation } from '../../services/operation.service'
+import { getStocksByName } from '../../services/stock.service'
 
-import { PrimaryButton, DefaultButton, TextField, Stack, ComboBox, DatePicker } from 'office-ui-fabric-react';
+import { PrimaryButton, DefaultButton, TextField, Stack, VirtualizedComboBox, DatePicker } from 'office-ui-fabric-react';
 
 export class AddStockForm extends Component {
 
-  state = {
-    formControllerAddOperation: {
-      shares: 0,
-      price: 0,
-      date: null,
-      stock: {},
+  constructor() {
+    super()
+    this.state = {
+      formControllerAddOperation: {
+        shares: 0,
+        price: 0,
+        date: null,
+        stock: {},
+      },
+      stockOptions: []
     }
   }
 
-  stockCodeOptions = [{key: '', text:''},{ key: 'IVVB11', text: 'IVVB11' }];
+
+  componentDidMount() {
+    getStocksByName().then(data =>
+      this.setState({
+        stockOptions: data.data.map(s => { return { key: s.Id, text: s.StockTicket } })
+      })
+    );
+  }
 
   AddStockForm() {
 
@@ -37,7 +49,7 @@ export class AddStockForm extends Component {
   }
 
   onClean() {
-    this.setState(Object.assign(this.state, { formControllerAddOperation: {stock:{}} }));
+    this.setState(Object.assign(this.state, { formControllerAddOperation: { stock: {} } }));
   }
 
   setValue(ev) {
@@ -51,17 +63,17 @@ export class AddStockForm extends Component {
       <Stack className="form-add-bought-stocks">
         <form>
           <Stack horizontal>
-            <ComboBox
+            <VirtualizedComboBox
               autoComplete="on"
               label="Stock Code:"
               selectedKey={this.state.formControllerAddOperation.stock}
               id="input-stock-code"
               className="space-from-right-5"
-              options={this.stockCodeOptions}
+              options={this.state.stockOptions}
               onItemClick={(_, value, index) =>
                 this.setValue({ target: { value: value.key, name: 'stock' } })
               }
-            ></ComboBox>
+            />
             <TextField
               name="shares"
               value={this.state.formControllerAddOperation.shares}

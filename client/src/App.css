@@ -3,7 +3,11 @@
     background-color: #efefef;
     min-height: 100vh;
     display: flex;
-    padding: 3em;
+}
+
+.app-container{
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .space-from-right-5 {

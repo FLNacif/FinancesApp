@@ -1,21 +1,18 @@
 package dto
 
-import (
-
-)
-
 type StockPositionDto struct {
-	code string
-	price float64
-	weight int
-	haveShares int
-	avgPrice float64
-	invested float64
-	haveMoney float64
-	action string
-	idealPct float64
-	idealMoney float64
-	missingMoney float64
-	missingShares int
-	variation float64
+	Code          string
+	Price         float64
+	Weight        int
+	HaveShares    int
+	AvgPrice      float64
+	Invested      float64
+	HaveMoney     float64
+	HavePct       float64
+	Action        string
+	IdealPct      float64
+	IdealMoney    float64
+	MissingMoney  float64
+	MissingShares int
+	Variation     float64
 }

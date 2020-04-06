@@ -1,17 +1,17 @@
 package main
 
 import (
-	"os"
 	"encoding/json"
-	"log"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+
 	"github.com/flnacif/financeapp/pkg/routes"
-    "github.com/rs/cors"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/rs/cors"
 )
 
 var db *gorm.DB
@@ -20,15 +20,16 @@ func main() {
 	r := mux.NewRouter()
 
 	routes.RegisterStockOperationsRoutes(r)
+	routes.RegisterStockRoutes(r)
 
 	r.HandleFunc("/healthcheck", HealthCheck).Methods("GET")
 	http.Handle("/", r)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
-		AllowedHeaders: []string{"*"},
-		})
+		AllowedHeaders:   []string{"*"},
+	})
 	handler := c.Handler(r)
 
 	fmt.Println("Listenning on http://localhost:8000/")

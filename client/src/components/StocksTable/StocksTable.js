@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import { DetailsList, Stack } from "office-ui-fabric-react";
+import { DetailsList, Stack, SelectionMode } from "office-ui-fabric-react";
 import './StocksTable.css'
 import currencyFormatter from "../../shared/formatters/currencyFormatter";
 import decimalPlacesFormatter from "../../shared/formatters/decimalPlacesFormatter";
 
 import { getPosition } from "../../services/operation.service"
+import { GlobalStore } from "../../services/GlobalStore";
+import { hideShowValues } from '../../shared/const';
 
 export class StocksTable extends Component {
 
@@ -13,92 +15,103 @@ export class StocksTable extends Component {
             {
                 key: 'Stock',
                 name: 'Stock',
-                fieldName: 'code',
+                fieldName: 'Code',
                 isRowHeader: true,
             },
             {
                 key: 'Price',
                 name: 'Price',
                 onRender: this.onRenderCurrencyColumn,
-                fieldName: 'price'
+                fieldName: 'Price',
+                alwaysShowValue: true
             },
             {
                 key: 'Weight',
                 name: 'Weight',
-                fieldName: 'weight',
+                fieldName: 'Weight',
             },
             {
                 key: 'HaveShares',
                 name: 'Have Shares',
-                fieldName: 'haveShares',
+                fieldName: 'HaveShares',
             },
             {
                 key: 'AvgPrice',
                 name: 'Avg Price',
-                fieldName: 'avgPrice',
+                fieldName: 'AvgPrice',
             },
             {
                 key: 'Invested',
                 name: 'Invested',
-                fieldName: 'invested',
+                fieldName: 'Invested',
             },
             {
                 key: 'HaveMoney',
                 name: 'Have Money',
                 onRender: this.onRenderCurrencyColumn,
-                fieldName: 'haveMoney'
+                fieldName: 'HaveMoney'
+            },
+            {
+                key: 'HavePct',
+                name: 'Have %',
+                onRender: this.onRenderPercentageColumn,
+                fieldName: 'HavePct'
             },
             {
                 key: 'Action',
                 name: 'Action',
-                fieldName: 'action'
+                fieldName: 'Action'
             },
             {
                 key: 'IdealPct',
                 name: 'Ideal %',
                 onRender: this.onRenderPercentageColumn,
-                fieldName: 'idealPct'
+                fieldName: 'IdealPct'
             },
             {
                 key: 'IdealMoney',
                 name: 'Ideal Money',
                 onRender: this.onRenderCurrencyColumn,
-                fieldName: 'idealMoney'
+                fieldName: 'IdealMoney'
             },
             {
                 key: 'MissingMoney',
                 name: 'Missing Money',
                 onRender: this.onRenderCurrencyColumn,
-                fieldName: 'missingMoney'
+                fieldName: 'MissingMoney'
             },
             {
                 key: 'MissingShares',
                 name: 'Missing Shares',
-                fieldName: 'missingShares'
+                fieldName: 'MissingShares'
             },
             {
                 key: 'EquityVariation',
                 name: 'Equity Variation',
-                fieldName: 'variation'
+                fieldName: 'Variation'
             },
         ],
 
         items: [
-        ]
+        ],
+        }
+
+    componentWillUnmount() {
+        this.showHideValuesSubscriber.unsubscribe();
     }
 
     componentDidMount() {
         getPosition().then(ops => {
-            this.setState({ items: ops.data });
+            this.setState({ items: ops.data.map(it => Object.assign(it, {showHideValues: GlobalStore.lookAt(hideShowValues)})) });
         }).catch(err => {
             // panic(err)
         })
+        this.showHideValuesSubscriber = GlobalStore.subscribe(hideShowValues, (v) =>this.setState({items: this.state.items.map(it => Object.assign(it, {showHideValues: v}))}), true)
     }
 
     onRenderCurrencyColumn(item, index, column) {
-        return (
-            currencyFormatter(item[column.fieldName], item.currency)
-        )
+        return currencyFormatter(item[column.fieldName], item.showHideValues || column.alwaysShowValue === true, item.currency)
+        
     }
 
     onRenderPercentageColumn(item, index, column) {
@@ -110,7 +123,9 @@ export class StocksTable extends Component {
             <Stack className="stock-table-stack">
                 <DetailsList
                     items={this.state.items}
-                    columns={this.state.columns}>
+                    columns={this.state.columns}
+                    selectionMode={SelectionMode.none}
+                    >
                 </DetailsList>
             </Stack>
         );

@@ -1,0 +1,33 @@
+.main-menu, .stack-menu{
+    width: 100%;
+    font-size: 1em;
+}
+
+ul.main-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+    border-bottom: 1px solid #333;
+}
+
+.main-menu li {
+    float: left;
+}
+
+.main-menu li a, .main-menu li span {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+
+.main-menu li a:hover, .main-menu li span:hover {
+    color: #111;
+    cursor: pointer;
+    background-color: #dfdfdf;
+}

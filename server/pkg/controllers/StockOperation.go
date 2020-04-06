@@ -7,6 +7,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/flnacif/financeapp/pkg/models"
+	"github.com/flnacif/financeapp/pkg/models/dto"
 	"github.com/flnacif/financeapp/pkg/utils"
 )
 
@@ -18,9 +19,11 @@ func getUserId(ctx context.Context) string {
 
 func CreateOperation(w http.ResponseWriter, r *http.Request) {
 	userId := getUserId(r.Context())
+	stockOperationDto := &dto.StockOperationDto{}
 	stockOperation := &models.StockOperation{}
-	utils.ParseBody(r, stockOperation)
-	stockOperation.UserId = userId
+	utils.ParseBody(r, stockOperationDto)
+	stockOperation.Fill(stockOperationDto)
+	stockOperation.UserStock = models.GetUserStock(userId, stockOperationDto.StockTicket)
 	b := stockOperation.CreateStockOperation()
 	res, _ := json.Marshal(b)
 	w.WriteHeader(http.StatusOK)
@@ -38,8 +41,8 @@ func GetOperations(w http.ResponseWriter, r *http.Request) {
 
 func GetPositions(w http.ResponseWriter, r *http.Request) {
 	userId := getUserId(r.Context())
-	newOperations := models.GetPositions(userId)
-	res, _ := json.Marshal(newOperations)
+	positionUser := models.GetPositions(userId)
+	res, _ := json.Marshal(positionUser)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)

@@ -10,5 +10,10 @@ var db *gorm.DB
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	db.AutoMigrate(&User{}, &StockOperation{})
+	db.AutoMigrate(&StockOperation{})
+	db.AutoMigrate(&StockPrice{})
+	db.AutoMigrate(&Wallet{})
+	db.AutoMigrate(&UserStockWallet{})
+	db.AutoMigrate(&UserStock{})
+	db.AutoMigrate(&Stock{})
 }

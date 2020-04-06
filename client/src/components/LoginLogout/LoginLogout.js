@@ -32,15 +32,15 @@ class LoginLogout extends Component {
     render() {
         if (!(GlobalStore.lookAt('keycloak')?.authenticated)) {
             return (
-                <button onClick={() => this.login()}>
+                <span onClick={() => this.login()}>
                     Login
-                </button>
+                </span>
             )
         } else {
             return (
-                <button onClick={() => this.logout()}>
+                <span onClick={() => this.logout()}>
                     Logout
-                </button>
+                </span>
             )
         }
     }

@@ -13,3 +13,8 @@ var RegisterStockOperationsRoutes = func(router *mux.Router) {
 	router.Handle("/stockoperation/getpositions", middlewares.AuthMiddleware(http.HandlerFunc(controllers.GetPositions))).Methods("GET")
 	router.Handle("/stockoperation/save", middlewares.AuthMiddleware(http.HandlerFunc(controllers.CreateOperation))).Methods("post")
 }
+
+var RegisterStockRoutes = func(router *mux.Router) {
+	router.Handle("/getstockslist/{name}", http.HandlerFunc(controllers.GetStocksByName)).Methods("GET")
+	router.Handle("/getstockslist/", http.HandlerFunc(controllers.GetStocksByName)).Methods("GET")
+}
